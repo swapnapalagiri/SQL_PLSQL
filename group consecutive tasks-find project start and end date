@@ -1,0 +1,38 @@
+If the End_Date of the tasks are consecutive, then they are part of the same project. Samantha is interested in finding the total number of different projects completed.
+
+Write a query to output the start and end dates of projects listed by the number of days it took to complete the project in ascending order. If there is more than one project that have the same number of completion days, then order by the start date of the project.
+
+--solve this, we need to group consecutive tasks (where the start_date of the next task is the same as the end_date of the previous task) into projects, and then find the start and end date of each project, along with the duration.
+--This is a classic "gaps and islands" problem. Since we're using SQL, we’ll use window functions and a
+
+
+
+
+WITH OrderedTasks AS (
+    SELECT *,
+           ROW_NUMBER() OVER (ORDER BY start_date) AS rn
+    FROM Projects
+),
+ProjectGroups AS (
+    SELECT *,
+           DATE_SUB(start_date, INTERVAL ROW_NUMBER() OVER (ORDER BY start_date) DAY) AS grp_key
+    FROM Projects
+)
+SELECT 
+    MIN(start_date) AS project_start,
+    MAX(end_date) AS project_end
+    FROM ProjectGroups
+GROUP BY grp_key
+ORDER BY  DATEDIFF(MAX(end_date), MIN(start_date)) ASC, project_start ASC;
+
+
+ SELECT *,
+           DATE_SUB(start_date, INTERVAL ROW_NUMBER() OVER (ORDER BY start_date) DAY) AS grp_key
+    FROM Projects
+
+This is used to group consecutive tasks into one project by computing a constant grp_key for each "island" of consecutive tasks.
+
+You get a constant value for rows where dates are consecutive (or form a chain via end/start match). That constant value acts as a grouping key.
+
+
+
