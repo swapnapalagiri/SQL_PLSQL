@@ -1,0 +1,15 @@
+/*
+Enter your query here.
+*/
+SELECT 
+   CASE 
+      WHEN (A + B > C) THEN
+        case 
+        when A=B and B=C then 'Equilateral'
+        when (A=B and B!=c) or (A=C and C!=B) then 'Isosceles'
+        else 'Scalene'
+        END
+      ELSE 'Not A Triangle'
+      
+   END AS tri
+FROM TRIANGLES;
