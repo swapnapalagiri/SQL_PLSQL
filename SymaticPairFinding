@@ -1,0 +1,20 @@
+
+SELECT x1, y1
+FROM (
+    -- Part 1: Symmetric pairs where x != y
+    SELECT f1.x AS x1, f1.y AS y1
+    FROM Functions f1
+    JOIN Functions f2
+        ON f1.x = f2.y AND f1.y = f2.x
+    WHERE f1.x < f1.y
+
+    UNION
+
+    -- Part 2: Duplicate pairs where x = y and count > 1
+    SELECT x AS x1, y AS y1
+    FROM Functions
+    WHERE x = y
+    GROUP BY x, y
+    HAVING COUNT(*) > 1
+) AS result
+ORDER BY x1, y1;
